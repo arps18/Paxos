@@ -16,14 +16,23 @@ import java.util.Scanner;
 import main.project4.RMI.ProcessReq.processRequest;
 import main.project4.RMI.Server.KeyValueStore;
 
+/**
+ * The Client class handles interactions with the RMI server.
+ */
 public class Client {
 
+  // Date format for displaying timestamp
   private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
 
+  /**
+   * The main method that starts the client application.
+   *
+   * @param args Command-line arguments: <hostname> <port> <remoteObjectName>
+   */
   public static void main(String[] args) {
     try {
       if (args.length != 3) {
-        System.out.println("Try: java Client localhost port remoteObjectName");
+        System.out.println("Usage: java Client <hostname> <port> <remoteObjectName>");
         System.exit(1);
       }
 
@@ -50,30 +59,35 @@ public class Client {
       Registry registry = LocateRegistry.getRegistry(hostname, port + addition, clientSocketFactory);
       KeyValueStore remoteObject = (KeyValueStore) registry.lookup(remoteObjectName);
 
+      // Pre-populate key values
       for (int i = 0; i < 10; i++) {
         System.out.println(getCurrentTime() + " Starting Pre-Populating of key values..");
         handleOperation("PUT key" + i + " value" + i, remoteObject);
         System.out.println(getCurrentTime() + " Pre-Population of key values completed!");
       }
 
+      // Perform GET operations
       for (int i = 0; i < 5; i++) {
         System.out.println(getCurrentTime() + " Performing GET Operation..");
         handleOperation("GET key" + i, remoteObject);
         System.out.println(getCurrentTime() + " GET Operation complete!");
       }
 
+      // Perform DELETE operations
       for (int i = 0; i < 5; i++) {
         System.out.println(getCurrentTime() + " Performing DELETE Operation..");
         handleOperation("DELETE key" + i, remoteObject);
         System.out.println(getCurrentTime() + " DELETE Operation complete!");
       }
 
+      // Perform PUT operations
       for (int i = 5; i < 10; i++) {
         System.out.println(getCurrentTime() + " Performing PUT Operation..");
         handleOperation("PUT key" + i + " value" + i, remoteObject);
         System.out.println(getCurrentTime() + " PUT Operation complete!");
       }
 
+      // Interactive operations loop
       while (true) {
         try {
           Scanner sc = new Scanner(System.in);
@@ -103,6 +117,15 @@ public class Client {
     }
   }
 
+  /**
+   * Handles the specified operation on the remote object.
+   *
+   * @param operation   The operation to perform.
+   * @param remoteObject The remote KeyValueStore object.
+   * @throws ServerNotActiveException If the server is not active.
+   * @throws RemoteException         If a remote communication error occurs.
+   * @throws InterruptedException    If the operation is interrupted.
+   */
   private static void handleOperation(String operation, KeyValueStore remoteObject)
       throws ServerNotActiveException, RemoteException, InterruptedException {
     System.out.println(getCurrentTime() + " Received operation -> " + operation);
@@ -117,6 +140,15 @@ public class Client {
     System.out.println(getCurrentTime() + " Response from server -> " + responseData);
   }
 
+  /**
+   * Processes the request on the remote KeyValueStore object.
+   *
+   * @param requestData The request data.
+   * @param remoteObject The remote KeyValueStore object.
+   * @return The processRequest response.
+   * @throws RemoteException      If a remote communication error occurs.
+   * @throws InterruptedException If the operation is interrupted.
+   */
   private static processRequest processRequest(String requestData, KeyValueStore remoteObject)
       throws RemoteException, InterruptedException {
     if (requestData.startsWith("PUT")) {
@@ -159,6 +191,11 @@ public class Client {
     return new processRequest(false, "Operation failed due to malformed input", "");
   }
 
+  /**
+   * Get the current timestamp in the specified format.
+   *
+   * @return The formatted timestamp.
+   */
   private static String getCurrentTime() {
     return "[Time: " + dateFormat.format(new Date()) + "]";
   }

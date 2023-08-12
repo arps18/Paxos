@@ -7,10 +7,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Date;
 
+/**
+ * The PaxosServerCreator class is responsible for creating and managing Paxos servers using RMI.
+ */
 public class PaxosServerCreator {
 
   private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
 
+  /**
+   * The main method of the PaxosServerCreator program.
+   *
+   * @param args Command line arguments.
+   */
   public static void main(String[] args) {
     try {
       int serverNumber = 5;
@@ -25,6 +33,7 @@ public class PaxosServerCreator {
 
         Server[] servers = new Server[serverNumber];
 
+        // Create and bind servers to the RMI registry
         for (int serverId = 0; serverId < serverNumber; serverId++) {
           int port = portInput + serverId;
 
@@ -37,8 +46,11 @@ public class PaxosServerCreator {
 
           System.out.println(getCurrentTime() + " - Server " + serverId + " is running at port " + port);
         }
+
+        // Schedule server drops
         scheduler(servers);
 
+        // Connect acceptors and learners to servers
         for (int serverId = 0; serverId < serverNumber; serverId++) {
           Acceptor[] acceptors = new Acceptor[serverNumber];
           Learner[] learners = new Learner[serverNumber];
@@ -59,6 +71,11 @@ public class PaxosServerCreator {
     }
   }
 
+  /**
+   * Schedules server drops at regular intervals.
+   *
+   * @param servers Array of servers.
+   */
   private static void scheduler(Server[] servers) {
     Timer timer = new Timer();
     timer.schedule(new TimerTask() {
@@ -69,12 +86,22 @@ public class PaxosServerCreator {
     }, 10000, 100000);
   }
 
+  /**
+   * Simulates a server going down randomly.
+   *
+   * @param servers Array of servers.
+   */
   private static void ServerDrop(Server[] servers) {
     int id = (int) (Math.random() * servers.length);
     servers[id].setServerDown();
     System.out.println(getCurrentTime() + " - Server " + id + " is going down...!!");
   }
 
+  /**
+   * Gets the current time in a formatted string.
+   *
+   * @return Formatted current time string.
+   */
   private static String getCurrentTime() {
     return "<Time: " + dateFormat.format(new Date()) + ">";
   }

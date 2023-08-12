@@ -8,18 +8,20 @@ This GitHub project extends the groundwork laid in Project #3 by introducing fau
 
 ## How to Use
 
-1. To start the server, run the following command: <br/>
+1. Go to the `/jar` folder and open a CLI.
+
+2. To start the server, run the following command: <br/>
    `java -jar Server.jar <port> <remoteObject>` <br/>
    > Replace `<port>` with the desired port number on which the server will provide remote methods for the client. Also, replace `<remoteObject>` with the chosen remote object registry name, through which the client can access the server's methods. For instance: `java -jar Server.jar 6001 KSS`
 
-2. To initiate the client, execute the following command: <br/>
+3. To initiate the client, execute the following command: <br/>
    `java -jar Client.jar <hostname> <port> <remoteObject>` <br/>
    > Replace `<serverAddress>` with the server's IP address or hostname, and `<serverPort>` with the port number on which the server exposes remote objects. In this project, the serverPort can be set as `localhost`. For example: `java -jar Client.jar localhost 6001 KSS`
 
-3. The initial step involves pre-populating the key store with values. Following this, the system will perform 5 operations including GET, DELETE, and PUT.
+4. The initial step involves pre-populating the key store with values. Following this, the system will perform 5 operations including GET, DELETE, and PUT.
 
-4. The client will prompt you to input the desired operation along with the Key and Value, as per the chosen operation. If the input is incorrect, it will ask you to re-enter the data. The server processes the operation and returns a response to the client indicating the success of the operation. If "EXIT" is entered as the operation, the client will exit the system.
-5. Example Input:
+5. The client will prompt you to input the desired operation along with the Key and Value, as per the chosen operation. If the input is incorrect, it will ask you to re-enter the data. The server processes the operation and returns a response to the client indicating the success of the operation. If "EXIT" is entered as the operation, the client will exit the system. 
+6. Example Input:
 
    `PUT key0 abc` <br/>
    `GET key0` <br/>

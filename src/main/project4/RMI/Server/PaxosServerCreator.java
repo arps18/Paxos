@@ -5,21 +5,18 @@ import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Date;
 
-/**
- * The PaxosServerCreator class is responsible for creating and binding the Paxos servers
- * within the RMI registry. It also configures the acceptors and learners for each server.
- */
 public class PaxosServerCreator {
+
+  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
 
   public static void main(String[] args) {
     try {
       int serverNumber = 5;
       try {
-
         if (args.length != 2) {
-          SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
-          System.out.println("Time : " + simpleDateFormat.format(System.currentTimeMillis()) + " - Usage: java PaxosServer c");
+          System.out.println(getCurrentTime() + " - Try: java PaxosServer port remoteObjectName");
           System.exit(1);
         }
 
@@ -38,7 +35,7 @@ public class PaxosServerCreator {
           Registry registry = LocateRegistry.getRegistry(port);
           registry.rebind(remoteObjectName, servers[serverId]);
 
-          System.out.println("Server " + serverId + " is running at port " + port);
+          System.out.println(getCurrentTime() + " - Server " + serverId + " is running at port " + port);
         }
         scheduler(servers);
 
@@ -54,14 +51,11 @@ public class PaxosServerCreator {
         }
 
       } catch (Exception e) {
-        System.err.println("Server exception: " + e.toString());
+        System.err.println(getCurrentTime() + " - Server exception: " + e.toString());
         e.printStackTrace();
       }
     } catch (Exception e) {
-      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
-      System.out.println(
-          "Time : " + simpleDateFormat.format(System.currentTimeMillis()) + " - Exception occurred while processing client with message" +
-              e.getMessage());
+      System.out.println(getCurrentTime() + " - Exception occurred while processing client with message: " + e.getMessage());
     }
   }
 
@@ -75,10 +69,13 @@ public class PaxosServerCreator {
     }, 10000, 100000);
   }
 
-  private static void ServerDrop(Server[] servers)  {
+  private static void ServerDrop(Server[] servers) {
     int id = (int) (Math.random() * servers.length);
     servers[id].setServerDown();
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
-    System.out.println(simpleDateFormat.format(System.currentTimeMillis()) + " -- Server " + id + " is going down...!!");
+    System.out.println(getCurrentTime() + " - Server " + id + " is going down...!!");
+  }
+
+  private static String getCurrentTime() {
+    return "<Time: " + dateFormat.format(new Date()) + ">";
   }
 }

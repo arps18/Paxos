@@ -23,7 +23,7 @@ public class Client {
   public static void main(String[] args) {
     try {
       if (args.length != 3) {
-        System.out.println("Usage: java Client <hostname> <port> <remoteObjectName>");
+        System.out.println("Try: java Client localhost port remoteObjectName");
         System.exit(1);
       }
 
@@ -77,7 +77,7 @@ public class Client {
       while (true) {
         try {
           Scanner sc = new Scanner(System.in);
-          System.out.println(getCurrentTime() + " - Enter the GET, PUT, DELETE operation string or enter EXIT to exit the client: ");
+          System.out.println(getCurrentTime() + " - Enter the GET, PUT, DELETE operation or EXIT to exit: ");
           String operation = sc.nextLine();
           addition = random.nextInt(4);
           registry = LocateRegistry.getRegistry(hostname, port + addition, clientSocketFactory);
@@ -89,15 +89,15 @@ public class Client {
             handleOperation(operation, remoteObject);
           }
         } catch (RemoteException e) {
-          System.out.println(getCurrentTime() + " - RemoteException occurred while processing client request");
+          System.out.println(getCurrentTime() + " - RemoteException while processing client request..!");
         } catch (ServerNotActiveException se) {
-          System.out.println(getCurrentTime() + " - ServerNotActiveException occurred while processing client request");
+          System.out.println(getCurrentTime() + " - ServerNotActiveException while processing client request..!");
         } catch (Exception e) {
-          System.out.println(getCurrentTime() + " - Exception occurred while processing client request with message: " + e.getMessage());
+          System.out.println(getCurrentTime() + " - Exception while processing client request with message: " + e.getMessage());
         }
       }
     } catch (RemoteException e) {
-      System.out.println(getCurrentTime() + " - RemoteException occurred while processing client registry");
+      System.out.println(getCurrentTime() + " - RemoteException while processing client registry..!");
     } catch (Exception e) {
       System.out.println(getCurrentTime() + " - Exception occurred while processing client with message: " + e.getMessage());
     }
@@ -105,16 +105,16 @@ public class Client {
 
   private static void handleOperation(String operation, KeyValueStore remoteObject)
       throws ServerNotActiveException, RemoteException, InterruptedException {
-    System.out.println(getCurrentTime() + " Received operation: " + operation);
+    System.out.println(getCurrentTime() + " Received operation -> " + operation);
     processRequest response = processRequest(operation, remoteObject);
     String responseData;
     if (!response.status) {
-      System.out.println(getCurrentTime() + " - Received malformed request of length " + operation.length());
+      System.out.println(getCurrentTime() + " : Received malformed request length " + operation.length());
       responseData = response.message;
     } else {
       responseData = response.value;
     }
-    System.out.println(getCurrentTime() + " Response from server: " + responseData);
+    System.out.println(getCurrentTime() + " Response from server -> " + responseData);
   }
 
   private static processRequest processRequest(String requestData, KeyValueStore remoteObject)
@@ -160,6 +160,6 @@ public class Client {
   }
 
   private static String getCurrentTime() {
-    return dateFormat.format(new Date());
+    return "[Time: " + dateFormat.format(new Date()) + "]";
   }
 }

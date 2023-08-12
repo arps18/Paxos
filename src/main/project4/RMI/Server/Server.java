@@ -19,7 +19,7 @@ public class Server extends UnicastRemoteObject implements Proposer, Acceptor, L
   private long serverDownTime = 0;
   private final int serverId;
   boolean isSuccess = false;
-  int SERVER_DT = 100;
+  int serverDownTimer = 100;
   double div = 2.0;
   private final Map<String, Pair<Integer, Boolean>> stringPairMap;
 
@@ -46,14 +46,14 @@ public class Server extends UnicastRemoteObject implements Proposer, Acceptor, L
     if (isSuccess)
       return "PUT operation successful for key - " + key + " with value - " + value;
     else
-      return "Error occurred during PUT operation for key - " + key;
+      return "Error for PUT operation for key -> " + key;
   }
 
   @Override
   public synchronized String get(String key) throws RemoteException {
     if (keyValueStore.containsKey(key))
       return keyValueStore.get(key);
-    return "No entry exists for the key - " + key;
+    return "No entry exists for the key -> " + key;
   }
 
   @Override
@@ -61,9 +61,9 @@ public class Server extends UnicastRemoteObject implements Proposer, Acceptor, L
     isSuccess = false;
     proposeOperation(new Operation("DELETE", key, null));
     if (isSuccess)
-      return "DELETE operation successful for key - " + key;
+      return "DELETE operation successful for key -> " + key;
     else
-      return "Error occurred during DELETE operation for key - " + key;
+      return "Error during DELETE operation for key -> " + key;
   }
 
   @Override
@@ -74,7 +74,7 @@ public class Server extends UnicastRemoteObject implements Proposer, Acceptor, L
   private boolean checkAcceptorStatus() throws RemoteException {
     if (serverStatus) {
       long currentTime = System.currentTimeMillis() / 1000L;
-      if (this.serverDownTime + SERVER_DT <= currentTime) {
+      if (this.serverDownTime + serverDownTimer <= currentTime) {
         serverStatus = false;
         return false;
       }
@@ -172,10 +172,10 @@ public class Server extends UnicastRemoteObject implements Proposer, Acceptor, L
       case "DELETE":
         if (keyValueStore.containsKey(operation.key)) {
           keyValueStore.remove(operation.key);
-          System.out.println(getCurrentTime() + " - DELETE Operation successful for Key - " + operation.key);
+          System.out.println(getCurrentTime() + " - DELETE Operation successful for Key -> " + operation.key);
           return true;
         } else {
-          System.out.println(getCurrentTime() + " - DELETE Operation Failed for Key - " + operation.key);
+          System.out.println(getCurrentTime() + " - DELETE Operation Failed for Key -> " + operation.key);
           return false;
         }
       default:
@@ -189,6 +189,6 @@ public class Server extends UnicastRemoteObject implements Proposer, Acceptor, L
   }
 
   private String getCurrentTime() {
-    return dateFormat.format(new Date());
+    return "<Time: " + dateFormat.format(new Date()) + ">";
   }
 }

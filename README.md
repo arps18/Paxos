@@ -13,7 +13,7 @@ This GitHub project extends the groundwork laid in Project #3 by introducing fau
    > Replace `<port>` with the desired port number on which the server will provide remote methods for the client. Also, replace `<remoteObject>` with the chosen remote object registry name, through which the client can access the server's methods. For instance: `java -jar Server.jar 6001 KSS`
 
 2. To initiate the client, execute the following command: <br/>
-   `java -jar project4/RMI/client/Client <hostname> <port> <remoteObject>` <br/>
+   `java -jar Client.jar <hostname> <port> <remoteObject>` <br/>
    > Replace `<serverAddress>` with the server's IP address or hostname, and `<serverPort>` with the port number on which the server exposes remote objects. In this project, the serverPort can be set as `localhost`. For example: `java -jar Client.jar localhost 6001 KSS`
 
 3. The initial step involves pre-populating the key store with values. Following this, the system will perform 5 operations including GET, DELETE, and PUT.
@@ -25,6 +25,8 @@ This GitHub project extends the groundwork laid in Project #3 by introducing fau
    `GET key0` <br/>
    `DELETE key0` <br/>
 
-7. Available Client Operation inputs: GET <KEY>, PUT <KEY> <VALUE>, DELETE <KEY>. The inputs are case-sensitive.
+7. Available Client Operation inputs: GET <KEY>, PUT <KEY> <VALUE>, DELETE <KEY>. The inputs are case-sensitive. </br>
    **Output**: The returned value for the given Key is: <VALUE>, Key: <KEY> has been added with Value: <VALUE>, Value for Key: <KEY> has been deleted.
+
+8. Screenshots for reference can be found in the `/res` folder.
 

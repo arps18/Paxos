@@ -9,29 +9,29 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.ServerNotActiveException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 import main.project4.RMI.ProcessReq.processRequest;
 import main.project4.RMI.Server.KeyValueStore;
 
-
 public class Client {
 
+  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
 
   public static void main(String[] args) {
     try {
-
       if (args.length != 3) {
-        System.out.println("Time : " + System.currentTimeMillis() + " - Usage: java PaxosClient c");
+        System.out.println("Usage: java Client <hostname> <port> <remoteObjectName>");
         System.exit(1);
       }
+
       String hostname = args[0];
       int port = Integer.parseInt(args[1]);
       String remoteObjectName = args[2];
 
-
       RMIClientSocketFactory clientSocketFactory = new RMIClientSocketFactory() {
-
         public Socket createSocket(String host, int port) throws IOException {
           Socket socket = new Socket();
           socket.connect(new InetSocketAddress(host, port), 5000); // 5 sec timeout
@@ -45,49 +45,43 @@ public class Client {
 
       clientSocketFactory.createSocket(hostname, port);
 
-
       Random random = new Random();
       int addition = random.nextInt(4);
       Registry registry = LocateRegistry.getRegistry(hostname, port + addition, clientSocketFactory);
       KeyValueStore remoteObject = (KeyValueStore) registry.lookup(remoteObjectName);
 
-
       for (int i = 0; i < 10; i++) {
-        System.out.println("Time : " + System.currentTimeMillis() + " Starting Pre-Populating of key values..");
+        System.out.println(getCurrentTime() + " Starting Pre-Populating of key values..");
         handleOperation("PUT key" + i + " value" + i, remoteObject);
-        System.out.println("Time : " + System.currentTimeMillis() + " Pre-Population of key values completed!");
+        System.out.println(getCurrentTime() + " Pre-Population of key values completed!");
       }
 
-
       for (int i = 0; i < 5; i++) {
-        System.out.println("Time : " + System.currentTimeMillis() + " Performing GET Operation..");
+        System.out.println(getCurrentTime() + " Performing GET Operation..");
         handleOperation("GET key" + i, remoteObject);
-        System.out.println("Time : " + System.currentTimeMillis() + " GET Operation complete!");
+        System.out.println(getCurrentTime() + " GET Operation complete!");
       }
-
 
       for (int i = 0; i < 5; i++) {
-        System.out.println("Time : " + System.currentTimeMillis() + " Performing DELETE Operation..");
+        System.out.println(getCurrentTime() + " Performing DELETE Operation..");
         handleOperation("DELETE key" + i, remoteObject);
-        System.out.println("Time : " + System.currentTimeMillis() + " DELETE Operation complete!");
+        System.out.println(getCurrentTime() + " DELETE Operation complete!");
       }
-
 
       for (int i = 5; i < 10; i++) {
-        System.out.println("Time : " + System.currentTimeMillis() + " Performing PUT Operation..");
+        System.out.println(getCurrentTime() + " Performing PUT Operation..");
         handleOperation("PUT key" + i + " value" + i, remoteObject);
-        System.out.println("Time : " + System.currentTimeMillis() + " PUT Operation complete!");
+        System.out.println(getCurrentTime() + " PUT Operation complete!");
       }
-
 
       while (true) {
         try {
           Scanner sc = new Scanner(System.in);
-          System.out.println("Time : " + System.currentTimeMillis() + " - Enter the GET, PUT, DELETE operation string or enter EXIT to exit the client: ");
+          System.out.println(getCurrentTime() + " - Enter the GET, PUT, DELETE operation string or enter EXIT to exit the client: ");
           String operation = sc.nextLine();
           addition = random.nextInt(4);
           registry = LocateRegistry.getRegistry(hostname, port + addition, clientSocketFactory);
-          System.out.println("Server port - " + port + addition);
+          System.out.println("Server port - " + (port + addition));
           remoteObject = (KeyValueStore) registry.lookup(remoteObjectName);
           if (operation.equalsIgnoreCase("EXIT"))
             break;
@@ -95,40 +89,36 @@ public class Client {
             handleOperation(operation, remoteObject);
           }
         } catch (RemoteException e) {
-          System.out.println("Time : " + System.currentTimeMillis() + " - RemoteException occurred while processing client request");
+          System.out.println(getCurrentTime() + " - RemoteException occurred while processing client request");
         } catch (ServerNotActiveException se) {
-          System.out.println("Time : " + System.currentTimeMillis() + " - ServerNotActiveException occurred while processing client request");
+          System.out.println(getCurrentTime() + " - ServerNotActiveException occurred while processing client request");
         } catch (Exception e) {
-          System.out.println("Time : " + System.currentTimeMillis() + " - Exception occurred while processing client request with message" + e.getMessage());
+          System.out.println(getCurrentTime() + " - Exception occurred while processing client request with message: " + e.getMessage());
         }
       }
     } catch (RemoteException e) {
-      System.out.println("Time : " + System.currentTimeMillis() + " - RemoteException occurred while processing client registry");
+      System.out.println(getCurrentTime() + " - RemoteException occurred while processing client registry");
     } catch (Exception e) {
-      System.out.println("Time : " + System.currentTimeMillis() + " - Exception occurred while processing client with message" + e.getMessage());
+      System.out.println(getCurrentTime() + " - Exception occurred while processing client with message: " + e.getMessage());
     }
   }
 
-
   private static void handleOperation(String operation, KeyValueStore remoteObject)
       throws ServerNotActiveException, RemoteException, InterruptedException {
-    System.out.println("Time : " + System.currentTimeMillis() + " Received operation : " + operation);
+    System.out.println(getCurrentTime() + " Received operation: " + operation);
     processRequest response = processRequest(operation, remoteObject);
     String responseData;
     if (!response.status) {
-      System.out.println("Time : " + System.currentTimeMillis() + " - Received malformed request of length " + operation.length());
+      System.out.println(getCurrentTime() + " - Received malformed request of length " + operation.length());
       responseData = response.message;
     } else {
       responseData = response.value;
     }
-    System.out.println("Time : " + System.currentTimeMillis() + " Response from server : " + responseData);
+    System.out.println(getCurrentTime() + " Response from server: " + responseData);
   }
-
 
   private static processRequest processRequest(String requestData, KeyValueStore remoteObject)
       throws RemoteException, InterruptedException {
-
-
     if (requestData.startsWith("PUT")) {
       String[] parts = requestData.split(" ");
       if (parts.length == 3) {
@@ -140,7 +130,6 @@ public class Client {
         return new processRequest(false, "PUT operation failed due to malformed input", "");
       }
     }
-
 
     if (requestData.startsWith("GET")) {
       String[] parts = requestData.split(" ");
@@ -168,5 +157,9 @@ public class Client {
       }
     }
     return new processRequest(false, "Operation failed due to malformed input", "");
+  }
+
+  private static String getCurrentTime() {
+    return dateFormat.format(new Date());
   }
 }

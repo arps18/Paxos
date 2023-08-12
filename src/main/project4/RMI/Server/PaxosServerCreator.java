@@ -2,6 +2,7 @@ package main.project4.RMI.Server;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.SimpleDateFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,7 +18,8 @@ public class PaxosServerCreator {
       try {
 
         if (args.length != 2) {
-          System.out.println("Time : " + System.currentTimeMillis() + " - Usage: java PaxosServer c");
+          SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
+          System.out.println("Time : " + simpleDateFormat.format(System.currentTimeMillis()) + " - Usage: java PaxosServer c");
           System.exit(1);
         }
 
@@ -56,8 +58,9 @@ public class PaxosServerCreator {
         e.printStackTrace();
       }
     } catch (Exception e) {
+      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
       System.out.println(
-          "Time : " + System.currentTimeMillis() + " - Exception occurred while processing client with message" +
+          "Time : " + simpleDateFormat.format(System.currentTimeMillis()) + " - Exception occurred while processing client with message" +
               e.getMessage());
     }
   }
@@ -75,6 +78,7 @@ public class PaxosServerCreator {
   private static void ServerDrop(Server[] servers)  {
     int id = (int) (Math.random() * servers.length);
     servers[id].setServerDown();
-    System.out.println(System.currentTimeMillis() + " -- Server " + id + " is going down...!!");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
+    System.out.println(simpleDateFormat.format(System.currentTimeMillis()) + " -- Server " + id + " is going down...!!");
   }
 }
